@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: engistore
+    env: docker
+    plan: free
+    branch: main
+    repo: https://github.com/Yandisa/engistore
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: SECRET_KEY
+        value: your-secret-key
+      - key: DEBUG
+        value: True
