@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h3 class="card-title">{{ part.name }} <small class="text-muted">({{ part.part_number }})</small></h3>
+    <p class="card-text">{{ part.description|default:"No description." }}</p>
+    <p><strong>Location:</strong> Room {{ part.room }}, Aisle {{ part.aisle }}, Bin {{ part.bin_number }}</p>
+    <p>
+      <strong>Quantity:</strong>
+      {% if part.quantity <= part.reorder_threshold %}
+        <span class="badge bg-danger">{{ part.quantity }} ⚠ Low</span>
+      {% else %}
+        <span class="badge bg-success">{{ part.quantity }}</span>
+      {% endif %}
+    </p>
+  </div>
+</div>
+
+<h5>Usage History</h5>
+{% if usage_logs %}
+  <ul class="list-group">
+    {% for usage in usage_logs %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          {{ usage.used_on }} — <strong>{{ usage.part.name }}</strong>
+          used on <em>{{ usage.asset.name }}</em>
+          {% if usage.taken_by %}
+            by <strong>{{ usage.taken_by.username }}</strong>
+          {% else %}
+            by <span class="text-muted">Unknown</span>
+          {% endif %}
+        </div>
+        <span class="badge bg-primary rounded-pill">{{ usage.quantity_used }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">This part has not been used on any assets yet.</p>
+{% endif %}
+
+{% if can_take_part %}
+  <hr class="my-4">
+  <h5>🛒 Take from Stock</h5>
+
+  {% if part.quantity > 0 %}
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-4">
+        {{ form.quantity.label_tag }} {{ form.quantity }}
+      </div>
+      <div class="col-md-6">
+        {{ form.asset.label_tag }} {{ form.asset }}
+      </div>
+      <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-danger mt-4">Take</button>
+      </div>
+    </form>
+  {% else %}
+    <p class="text-danger">Out of stock — cannot take any more.</p>
+  {% endif %}
+{% endif %}
+
+{% if messages %}
+  <div class="mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% endblock %}

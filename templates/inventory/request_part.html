@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Request a New Part | EngiStore{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">📥 Request a New Part</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="mb-3">
+          <label for="id_name" class="form-label">Part Name</label>
+          {{ form.name }}
+          {{ form.name.errors }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_part_number" class="form-label">Part Number</label>
+          {{ form.part_number }}
+          {{ form.part_number.errors }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_quantity_needed" class="form-label">Quantity Needed</label>
+          {{ form.quantity_needed }}
+          {{ form.quantity_needed.errors }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_reason" class="form-label">Reason</label>
+          {{ form.reason }}
+          {{ form.reason.errors }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">🛒 Take a Part from Inventory</h2>
+
+<form method="post" class="row g-3">
+  {% csrf_token %}
+  <div class="col-md-6">
+    {{ form.part.label_tag }} {{ form.part }}
+  </div>
+  <div class="col-md-4">
+    {{ form.quantity.label_tag }} {{ form.quantity }}
+  </div>
+  <div class="col-md-2 d-grid">
+    <button type="submit" class="btn btn-danger mt-4">Take</button>
+  </div>
+</form>
+
+{% if messages %}
+  <div class="mt-4">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

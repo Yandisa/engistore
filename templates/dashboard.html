@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h2 class="mb-4">📊 Dashboard</h2>
+
+<!-- Alert Cards -->
+<div class="row text-center mb-4">
+  <!-- same 4 cards... -->
+</div>
+
+<!-- Recently Added Parts -->
+<h5>🆕 Recently Added Parts</h5>
+{% if recent_parts %}
+  <ul class="list-group mb-4">
+    {% for part in recent_parts %}
+      <li class="list-group-item">
+        <strong>{{ part.name }}</strong> ({{ part.part_number }}) — {{ part.created_at|date:"M d, Y" }}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No parts have been added recently.</p>
+{% endif %}
+
+{% if can_add_user and part_requests %}
+  <hr class="my-4">
+  <h5>📨 Pending Part Requests</h5>
+  <ul class="list-group mb-4">
+    {% for request in part_requests %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ request.name }}</strong> ({{ request.part_number }}) — 
+          requested by <strong>{{ request.requested_by.username }}</strong> on 
+          {{ request.created_at|date:"M d, Y" }}
+          {% if request.reason %}
+            <br><small class="text-muted">Reason: {{ request.reason }}</small>
+          {% endif %}
+        </div>
+        <a href="/admin/inventory/partrequest/{{ request.id }}/change/" class="btn btn-sm btn-outline-dark">Review</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<!-- Recent Usage -->
+<h5>🛠️ Recent Part Usage</h5>
+{% if recent_usage %}
+  <ul class="list-group mb-4">
+    {% for usage in recent_usage %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          {{ usage.used_on|date:"M d, Y" }} — <strong>{{ usage.part.name }}</strong> used on <em>{{ usage.asset.name }}</em>
+          {% if usage.taken_by %}
+            by <strong>{{ usage.taken_by.username }}</strong>
+          {% endif %}
+        </div>
+        <span class="badge bg-primary rounded-pill">{{ usage.quantity_used }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No usage logged yet.</p>
+{% endif %}
+
+<!-- Quick Links -->
+<hr class="my-4">
+<h5>⚡ Quick Actions</h5>
+<div class="row row-cols-1 row-cols-md-2 g-3">
+  <div class="col">
+    <a href="{% url 'part_list' %}" class="btn btn-outline-primary w-100 py-3">📦 View All Parts</a>
+  </div>
+  <div class="col">
+    <a href="{% url 'asset_list' %}" class="btn btn-outline-secondary w-100 py-3">🛠 View All Assets</a>
+  </div>
+  {% if can_add_user %}
+  <div class="col">
+    <a href="/admin/inventory/part/add/" class="btn btn-outline-info w-100 py-3">➕ Add New Part</a>
+  </div>
+  {% endif %}
+  <div class="col">
+    <a href="{% url 'part_list' %}" class="btn btn-outline-warning w-100 py-3">🛒 Take a Part</a>
+  </div>
+  {% if can_add_user %}
+  <div class="col">
+    <a href="/admin/" class="btn btn-outline-dark w-100 py-3">⚙️ Admin Panel</a>
+  </div>
+  <div class="col">
+    <a href="{% url 'create_user' %}" class="btn btn-outline-dark w-100 py-3">👤 Create User</a>
+  </div>
+  {% endif %}
+  {% if can_request_part %}
+  <div class="col">
+    <a href="{% url 'request_part' %}" class="btn btn-outline-primary w-100 py-3">📩 Request a Part</a>
+  </div>
+  {% endif %}
+  <div class="col">
+    <a href="{% url 'part_list' %}?low_stock=1" class="btn btn-outline-danger w-100 py-3">⚠ Low Stock</a>
+  </div>
+</div>
+{% endblock %}

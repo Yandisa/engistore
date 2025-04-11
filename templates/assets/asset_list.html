@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Assets</h2>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  {% for asset in assets %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ asset.name }}</h5>
+          <h6 class="card-subtitle text-muted">{{ asset.code }}</h6>
+          <p class="card-text">{{ asset.description|default:"No description." }}</p>
+        </div>
+        <div class="card-footer text-end">
+          <a href="{{ asset.id }}/" class="btn btn-sm btn-outline-primary">View Usage</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

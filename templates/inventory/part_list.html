@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Parts Inventory</h2>
+{% if user.is_authenticated %}
+  {% with user.groups.first as group %}
+    {% if group and group.name == "Technician" or group.name == "Viewer" %}
+      <li class="nav-item">
+        <a href="{% url 'request_part' %}" class="nav-link">
+          <i class="fas fa-plus-circle me-2"></i>Request Part
+        </a>
+      </li>
+    {% endif %}
+  {% endwith %}
+{% endif %}
+<form method="get" class="row g-2 mb-4">
+  <div class="col-md-6">
+    <input type="text" name="q" class="form-control" placeholder="Search parts..." value="{{ query }}">
+  </div>
+  <div class="col-md-4">
+    <select name="category" class="form-select">
+      <option value="">All Categories</option>
+      {% for category in categories %}
+        <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+          {{ category.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-primary w-100">Search</button>
+  </div>
+</form>
+
+{% if parts %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for part in parts %}
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">{{ part.name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ part.part_number }}</h6>
+            <p class="card-text">{{ part.description|default:"No description." }}</p>
+            <p class="mb-1">
+              <strong>Location:</strong> Room {{ part.room }} &middot; Aisle {{ part.aisle }} &middot; Bin {{ part.bin_number }}
+            </p>
+            <p>
+              <strong>Quantity:</strong>
+              {% if part.quantity <= part.reorder_threshold %}
+                <span class="badge bg-danger">{{ part.quantity }} ⚠ Low Stock</span>
+              {% else %}
+                <span class="badge bg-success">{{ part.quantity }}</span>
+              {% endif %}
+            </p>
+          </div>
+          <div class="card-footer text-end">
+            <a href="{{ part.id }}/" class="btn btn-sm btn-outline-primary">View</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-muted">No parts found.</p>
+{% endif %}
+{% endblock %}
