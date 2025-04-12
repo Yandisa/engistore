@@ -3,6 +3,8 @@ from django.db.models import Q, F
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_http_methods
+from django.db import transaction
 from django.contrib.auth.decorators import login_required
 
 from .models import Part, Category, PartRequest
@@ -10,41 +12,11 @@ from assets.models import Asset, PartUsage
 from utils.permissions import is_technician, is_manager, is_admin
 
 
-# 🔧 Form for taking a part
-class TakePartForm(forms.Form):
-    quantity = forms.IntegerField(
-        min_value=1,
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
-    )
-    asset = forms.ModelChoiceField(
-        queryset=Asset.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-select'})
-    )
-
-
-# 🌟 Form for requesting a new part
-class PartRequestForm(forms.ModelForm):
-    class Meta:
-        model = PartRequest
-        fields = ['name', 'part_number', 'quantity_needed', 'reason']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'part_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'quantity_needed': forms.NumberInput(
-                attrs={'class': 'form-control'}
-            ),
-            'reason': forms.Textarea(
-                attrs={'class': 'form-control', 'rows': 3}
-            ),
-        }
-
-
-# ✅ All users can view parts
-@login_required
+# ✅ Public view — list all parts
 def part_list(request):
     """
-    Displays a list of parts with optional search, category filtering,
-    and low stock toggle.
+    Displays all parts in inventory.
+    Allows search and filtering by category and low stock.
     """
     query = request.GET.get('q')
     category_id = request.GET.get('category')
@@ -72,12 +44,11 @@ def part_list(request):
     })
 
 
-# 📊 Dashboard view
-@login_required
+# 📊 Dashboard view (basic stats + latest activity)
 def dashboard(request):
     """
-    Displays dashboard statistics and pending part requests
-    (if the user is a manager or admin).
+    Displays system stats and user-specific widgets on login.
+    Accessible to all; more data shown to authenticated users.
     """
     total_parts = Part.objects.count()
     total_assets = Asset.objects.count()
@@ -85,26 +56,31 @@ def dashboard(request):
         quantity__lte=F('reorder_threshold')
     ).count()
     recent_parts = Part.objects.order_by('-date_added')[:5]
-    unused_parts_count = Part.objects.filter(
-        partusage__isnull=True
-    ).count()
-    recent_usage = PartUsage.objects.select_related(
-        'part', 'asset'
-    ).order_by('-used_on')[:5]
+    unused_parts_count = Part.objects.filter(partusage__isnull=True).count()
 
-    can_add_user = (
-        is_admin(request.user) or
-        is_manager(request.user) or
-        request.user.is_superuser
-    )
+    # Default UI values
+    recent_usage = []
+    part_requests = []
+    user_group = None
+    can_add_user = False
+    can_request_part = False
+    is_logged_in = request.user.is_authenticated
 
-    part_requests = (
-        PartRequest.objects.filter(reviewed=False)
-        if can_add_user else []
-    )
+    if is_logged_in:
+        recent_usage = PartUsage.objects.select_related(
+            'part', 'asset'
+        ).order_by('-used_on')[:5]
 
-    user_groups = request.user.groups.values_list('name', flat=True)
-    user_group = user_groups[0] if user_groups else None
+        if request.user.groups.exists():
+            user_group = request.user.groups.first().name
+
+        if is_admin(request.user) or is_manager(request.user) \
+                or request.user.is_superuser:
+            can_add_user = True
+            part_requests = PartRequest.objects.filter(reviewed=False)
+
+        if is_technician(request.user) or user_group == "Viewer":
+            can_request_part = True
 
     return render(request, 'dashboard.html', {
         'total_parts': total_parts,
@@ -113,18 +89,21 @@ def dashboard(request):
         'recent_parts': recent_parts,
         'unused_parts_count': unused_parts_count,
         'recent_usage': recent_usage,
-        'can_add_user': can_add_user,
         'part_requests': part_requests,
+        'can_add_user': can_add_user,
+        'can_request_part': can_request_part,
         'user_group': user_group,
+        'is_logged_in': is_logged_in,
     })
 
 
-# 📦 Part detail & take from stock
+# 📦 Part detail & "take part from stock"
 @login_required
+@require_http_methods(["GET", "POST"])
 def part_detail(request, pk):
     """
-    Shows a single part and its usage history.
-    Allows authorized users to take stock from inventory.
+    View part details, stock, and usage history.
+    Logged-in users with permissions can deduct stock.
     """
     part = get_object_or_404(Part, pk=pk)
     usage_logs = PartUsage.objects.filter(
@@ -134,11 +113,12 @@ def part_detail(request, pk):
     general_asset, _ = Asset.objects.get_or_create(
         name="General",
         code="GEN-000",
-        defaults={"description": "Used when not assigned to an asset"}
+        defaults={"description": "Used when not linked to an asset"}
     )
 
-    asset_queryset = Asset.objects.exclude(pk=general_asset.pk) | \
-        Asset.objects.filter(pk=general_asset.pk)
+    asset_queryset = Asset.objects.exclude(
+        pk=general_asset.pk
+    ) | Asset.objects.filter(pk=general_asset.pk)
 
     can_take_part = (
         is_technician(request.user) or
@@ -161,25 +141,29 @@ def part_detail(request, pk):
                 messages.error(request, "This part is out of stock.")
             elif quantity > part.quantity:
                 messages.error(
-                    request, f"Only {part.quantity} units left in stock."
+                    request,
+                    f"Only {part.quantity} unit(s) available."
                 )
             else:
-                part.quantity -= quantity
-                part.save()
-
                 try:
-                    PartUsage.objects.create(
-                        asset=asset,
-                        part=part,
-                        quantity_used=quantity,
-                        taken_by=request.user
-                    )
+                    with transaction.atomic():
+                        part.quantity -= quantity
+                        part.save()
+
+                        PartUsage.objects.create(
+                            asset=asset,
+                            part=part,
+                            quantity_used=quantity,
+                            taken_by=request.user
+                        )
+
                     messages.success(
                         request,
-                        f"{quantity} units of '{part.name}' taken "
-                        f"from stock for asset '{asset.name}'."
+                        f"{quantity} unit(s) of '{part.name}' taken "
+                        f"for asset '{asset.name}'."
                     )
                     return redirect('part_detail', pk=part.pk)
+
                 except ValidationError as e:
                     messages.error(request, e)
 
@@ -191,11 +175,11 @@ def part_detail(request, pk):
     })
 
 
-# 📩 Request a part (Technician/Viewer)
+# 📩 Part request form
 @login_required
 def request_part(request):
     """
-    Handles submission of part requests by technicians or viewers.
+    Allows technicians and viewers to submit new part requests.
     """
     if request.method == 'POST':
         form = PartRequestForm(request.POST)
@@ -215,11 +199,11 @@ def request_part(request):
     })
 
 
-# 📝 View all part requests by this user
+# 📝 View part request history for logged-in user
 @login_required
 def my_part_requests(request):
     """
-    View to display the logged-in user's part requests.
+    Displays a list of part requests made by the logged-in user.
     """
     requests = PartRequest.objects.filter(
         requested_by=request.user
@@ -227,3 +211,40 @@ def my_part_requests(request):
     return render(request, 'inventory/my_part_requests.html', {
         'requests': requests
     })
+
+
+# 📘 About page (static)
+def about(request):
+    """
+    About page with project information and system overview.
+    """
+    return render(request, 'about.html')
+
+
+# 🔧 Form for taking a part from stock
+class TakePartForm(forms.Form):
+    quantity = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    asset = forms.ModelChoiceField(
+        queryset=Asset.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+
+# 📩 Form for requesting a new part
+class PartRequestForm(forms.ModelForm):
+    class Meta:
+        model = PartRequest
+        fields = ['name', 'part_number', 'quantity_needed', 'reason']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'part_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'quantity_needed': forms.NumberInput(
+                attrs={'class': 'form-control'}
+            ),
+            'reason': forms.Textarea(
+                attrs={'class': 'form-control', 'rows': 3}
+            ),
+        }

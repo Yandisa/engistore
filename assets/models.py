@@ -6,7 +6,8 @@ from inventory.models import Part
 
 class Asset(models.Model):
     """
-    Represents a machine, equipment, or system that parts are used on.
+    Represents a machine, equipment, or system
+    on which parts are installed or used.
     """
     name = models.CharField(max_length=200)
     code = models.CharField(max_length=100, unique=True)
@@ -19,15 +20,20 @@ class Asset(models.Model):
 class PartUsage(models.Model):
     """
     Records the usage of a part on a specific asset.
-    Links to a user, asset, and part, while validating stock levels.
+
+    Associates with an asset, part, and the user who took it.
+    Automatically tracks the usage date and ensures that
+    stock levels are not exceeded.
     """
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
     part = models.ForeignKey(Part, on_delete=models.CASCADE)
     quantity_used = models.PositiveIntegerField()
     used_on = models.DateField(auto_now_add=True)
     taken_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL,
-        null=True, blank=True
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
 
     def __str__(self):
@@ -39,18 +45,18 @@ class PartUsage(models.Model):
 
     def clean(self):
         """
-        Validates that quantity used does not exceed available stock.
-        Only applies on creation (no PK yet).
+        Validates that the quantity used does not exceed
+        the available part stock. Applies only on creation.
         """
         if not self.pk and self.quantity_used > self.part.quantity:
             raise ValidationError(
-                f"Not enough stock. Tried to use {self.quantity_used}, "
+                f"Not enough stock: Tried {self.quantity_used}, "
                 f"but only {self.part.quantity} available."
             )
 
     def save(self, *args, **kwargs):
         """
-        Runs validation and updates the part's stock only on creation.
+        Runs validation and deducts part stock on creation only.
         """
         self.full_clean()
         if not self.pk:

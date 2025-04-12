@@ -8,6 +8,7 @@
   <h2 class="mb-4">📝 My Part Requests</h2>
 
   {% if requests %}
+    <!-- 📋 Responsive table of requests -->
     <div class="table-responsive">
       <table class="table table-striped">
         <thead>
@@ -28,9 +29,13 @@
             <td>{{ request.created_at|date:"M d, Y" }}</td>
             <td>
               {% if request.status == 'Pending' %}
-                <span class="badge bg-warning text-dark">Pending</span>
+                <span class="badge bg-warning text-dark">
+                  Pending
+                </span>
               {% elif request.status == 'Approved - Awaiting Delivery' %}
-                <span class="badge bg-info text-dark">Approved - Awaiting Delivery</span>
+                <span class="badge bg-info text-dark">
+                  Approved - Awaiting Delivery
+                </span>
               {% elif request.status == 'Rejected' %}
                 <span class="badge bg-danger">Rejected</span>
               {% elif request.status == 'Delivered' %}
@@ -41,10 +46,11 @@
           {% endfor %}
         </tbody>
       </table>
-      
     </div>
   {% else %}
-    <p class="text-muted">You haven't submitted any part requests yet.</p>
+    <p class="text-muted">
+      You haven't submitted any part requests yet.
+    </p>
   {% endif %}
 </div>
 {% endblock %}

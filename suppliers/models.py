@@ -4,13 +4,13 @@ from inventory.models import Part
 
 class Supplier(models.Model):
     """
-    Represents a supplier entity.
+    Represents a supplier that provides parts.
 
     Fields:
-        - name: Supplier name
-        - contact_email: Email address of the supplier
-        - phone: Contact phone number
-        - parts_supplied: Parts this supplier provides (many-to-many relationship)
+    - name: Supplier's company name
+    - contact_email: Supplier's email address
+    - phone: Contact number for quick communication
+    - parts_supplied: Parts this supplier can provide
     """
     name = models.CharField(max_length=200)
     contact_email = models.EmailField()

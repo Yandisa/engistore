@@ -3,9 +3,6 @@ from .views import create_user
 
 # URL patterns for user-related actions
 urlpatterns = [
-    path(
-        'create/',
-        create_user,
-        name='create_user'
-    ),
+    # 🧑‍💼 Create a new user (Admin/Manager only)
+    path('create/', create_user, name='create_user'),
 ]

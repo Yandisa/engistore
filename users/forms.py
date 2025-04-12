@@ -5,8 +5,10 @@ from django.contrib.auth.forms import UserCreationForm
 
 class UserCreationFormWithRole(UserCreationForm):
     """
-    Custom user creation form that includes a role selection.
-    Users will be assigned to a group (role) upon creation.
+    Custom user creation form that includes role assignment.
+
+    This form adds a dropdown for selecting the user’s group
+    (Viewer, Technician, Manager, Admin) during account creation.
     """
     ROLE_CHOICES = [
         ('Viewer', 'Viewer'),
@@ -18,7 +20,7 @@ class UserCreationFormWithRole(UserCreationForm):
     role = forms.ChoiceField(
         choices=ROLE_CHOICES,
         label='User Role',
-        help_text='Select the role this user should be assigned to.'
+        help_text='Select a group to assign this user to.'
     )
 
     class Meta:

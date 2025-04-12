@@ -1,0 +1,11 @@
+* [33m890550f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Add DB with admin user
+* [33m3adcd61[m ⚙️ Add WhiteNoise and pre-deploy collectstatic
+* [33m5376236[m Add staticfiles for deployment on Render
+* [33mf4a33fa[m Fix STATIC_URL and CSRF settings for deployment
+* [33mefa6f82[m Refactored group creation to post_migrate signal
+* [33mb096b11[m Fix: move collectstatic to CMD
+* [33m8d53818[m Ensure staticfiles folder is not tracked
+* [33mddbc883[m Fix typo in requirements.txt
+* [33m79f42c6[m Add gunicorn and dotenv for Render deployment
+* [33mf87ae7f[m Remove sensitive files and update .gitignore
+* [33m815c60e[m  Initial commit - EngiStore ready for Render deployment

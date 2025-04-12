@@ -5,7 +5,9 @@ from .models import PartRequest
 class PartRequestForm(forms.ModelForm):
     """
     Form for technicians and viewers to request new parts.
-    Captures part name, part number (optional), quantity, and reason.
+
+    Includes fields for part name, optional part number,
+    quantity requested, and the reason for the request.
     """
 
     class Meta:

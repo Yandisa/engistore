@@ -6,19 +6,26 @@ from .models import Part, Category, PartRequest
 class PartAdmin(admin.ModelAdmin):
     """
     Admin interface for managing Part objects.
-    Displays inventory details and enables search functionality.
+
+    Displays inventory details such as part number, location,
+    quantity, and reorder threshold. Enables search by part info.
     """
     list_display = (
         'part_number', 'name', 'category', 'room',
         'aisle', 'bin_number', 'quantity', 'reorder_threshold'
     )
-    search_fields = ('part_number', 'name', 'room', 'aisle', 'bin_number')
+    search_fields = (
+        'part_number', 'name', 'room',
+        'aisle', 'bin_number'
+    )
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     """
     Admin interface for managing Category objects.
+
+    Displays all available part categories.
     """
     list_display = ('name',)
 
@@ -27,23 +34,15 @@ class CategoryAdmin(admin.ModelAdmin):
 class PartRequestAdmin(admin.ModelAdmin):
     """
     Admin interface for managing PartRequest objects.
-    Allows filtering and searching by status and requester.
+
+    Displays part request details and allows filtering
+    by status and requester. Useful for processing approvals.
     """
     list_display = (
         'name', 'part_number', 'requested_by',
         'status', 'created_at'
     )
     list_filter = ('status',)
-    search_fields = ('name', 'part_number', 'requested_by__username')
-
-    def get_status(self, obj):
-        """
-        Determines request status dynamically.
-        """
-        if obj.approved:
-            return "Approved"
-        elif obj.reviewed:
-            return "Rejected"
-        return "Pending"
-
-    get_status.short_description = 'Status'
+    search_fields = (
+        'name', 'part_number', 'requested_by__username'
+    )

@@ -1,13 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
+<!-- 🔧 Asset Overview -->
 <div class="card mb-4 shadow-sm">
   <div class="card-body">
-    <h3 class="card-title">{{ asset.name }} <small class="text-muted">({{ asset.code }})</small></h3>
-    <p class="card-text">{{ asset.description|default:"No description." }}</p>
+    <h3 class="card-title">
+      {{ asset.name }}
+      <small class="text-muted">({{ asset.code }})</small>
+    </h3>
+    <p class="card-text">
+      {{ asset.description|default:"No description." }}
+    </p>
   </div>
 </div>
 
+<!-- 📋 Usage History -->
 <h4>Part Usage History</h4>
 {% if part_usages %}
   <ul class="list-group mb-4">
@@ -16,14 +24,19 @@
         <div>
           {{ usage.used_on }} — <strong>{{ usage.part.name }}</strong>
         </div>
-        <span class="badge bg-primary rounded-pill">{{ usage.quantity_used }}</span>
+        <span class="badge bg-primary rounded-pill">
+          {{ usage.quantity_used }}
+        </span>
       </li>
     {% endfor %}
   </ul>
 {% else %}
-  <p class="text-muted mb-4">No parts have been logged for this asset yet.</p>
+  <p class="text-muted mb-4">
+    No parts have been logged for this asset yet.
+  </p>
 {% endif %}
 
+<!-- ➕ Log New Usage -->
 <hr class="my-4">
 <h5>Log Part Usage</h5>
 <form method="post" class="row g-3">
@@ -35,7 +48,9 @@
     {{ form.quantity_used.label_tag }} {{ form.quantity_used }}
   </div>
   <div class="col-md-2">
-    <button type="submit" class="btn btn-success w-100 mt-4">Log Usage</button>
+    <button type="submit" class="btn btn-success w-100 mt-4">
+      Log Usage
+    </button>
   </div>
 </form>
 {% endblock %}

@@ -1,27 +1,33 @@
+"""
+Root URL configuration for EngiStore.
+
+Includes routes for admin, dashboard, apps, authentication,
+and user management.
+"""
+
 from django.contrib import admin
 from django.urls import path, include
-from inventory.views import dashboard
 from django.contrib.auth import views as auth_views
+from inventory.views import dashboard
 
 urlpatterns = [
     # 🔐 Admin panel
     path('admin/', admin.site.urls),
 
-    # 🏠 Dashboard (home page after login)
+    # 🏠 Dashboard (landing page after login)
     path('', dashboard, name='dashboard'),
 
-    # 📦 Inventory app
+    # 📦 Inventory management
     path('inventory/', include('inventory.urls')),
 
-    # 🛠 Assets app
+    # 🛠 Assets tracking
     path('assets/', include('assets.urls')),
 
-    # 👤 Logout (handled by Django's built-in auth views)
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
-
-    # 🔑 Authentication routes (login, password reset, etc.)
-    path('accounts/', include('django.contrib.auth.urls')),
-
-    # 👥 Custom user-related views (like create user)
+    # 👥 User-related views (e.g., create user)
     path('users/', include('users.urls')),
+
+    # 🔐 Auth (login, logout, password reset, etc.)
+    path('accounts/logout/', auth_views.LogoutView.as_view(),
+         name='logout'),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

@@ -1,34 +1,37 @@
+import os
+import sys
 from pathlib import Path
 from django.urls import reverse_lazy
-import os
 
-# Base directory
+# 📁 Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))  # Add project to Python path
 
-# SECURITY
+# 🔐 Security
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-insecure-dev-key")
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = ['*']
 
-# Installed apps
+# 📦 Installed applications
 INSTALLED_APPS = [
+    # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Custom apps
+
+    # 🌟 Custom apps
     'inventory',
     'assets',
     'suppliers',
     'users',
 ]
 
-# Middleware
+# 🧱 Middleware
 MIDDLEWARE = [
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Static files
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -36,12 +39,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 ]
 
+# 🔗 URL config
 ROOT_URLCONF = 'engistore.urls'
 
-# Templates
+# 🎨 Template configuration
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -53,14 +56,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'engistore.context_processors.global_debug',
             ],
         },
     },
 ]
 
+# 🚀 WSGI application
 WSGI_APPLICATION = 'engistore.wsgi.application'
 
-# Database
+# 🗃️ Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -68,7 +73,7 @@ DATABASES = {
     }
 }
 
-# Password validators
+# 🔐 Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': (
@@ -96,28 +101,29 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Localization
+# 🌍 Localization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# 🖼️ Static files
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
 
-
-# Default primary key
+# 🔑 Default auto primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Authentication redirects
+# 🔁 Redirects
 LOGIN_REDIRECT_URL = reverse_lazy('dashboard')
 LOGOUT_REDIRECT_URL = reverse_lazy('login')
 LOGIN_URL = 'login'
 
-# Allow trusted hosts for CSRF protection in production (e.g., Render)
+# 🛡️ CSRF Protection (for Render)
 CSRF_TRUSTED_ORIGINS = [
-    'https://engistore.onrender.com'  # 🔁 Replace with your actual Render URL
+    'https://engistore.onrender.com',
 ]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

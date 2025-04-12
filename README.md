@@ -1,5 +1,9 @@
 # ⚙️ EngiStore – Engineering Inventory & Asset Management System
 
+🔗 **Live Demo**: https://engistore.onrender.com  
+📂 **GitHub Repo**: https://github.com/Yandisa/engistore
+
+
 **EngiStore** is a powerful, scalable, and user-friendly web-based inventory system designed for engineering environments such as factories, workshops, and maintenance departments. It offers complete visibility into parts, assets, and part usage, enabling traceability, accountability, and efficiency in stock management.
 
 Whether you’re managing spare parts for machinery, tools for maintenance, or components for operations — EngiStore empowers your team with streamlined processes, role-based access, and actionable insights.
@@ -135,12 +139,17 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-5. **Start the server**
+5. **Collect static files**
+```bash
+python manage.py collectstatic --noinput
+```
+
+6. **Start the server**
 ```bash
 python manage.py runserver
 ```
 
-6. **Login and explore**
+7. **Login and explore**
 - Open your browser: `http://127.0.0.1:8000/`
 - Default login page: `/accounts/login/`
 
@@ -156,12 +165,12 @@ python manage.py runserver
 
 ## 📌 Target Users
 
-- Workshop managers
-- Maintenance teams
-- Engineers
-- Storekeepers
-- Factory operations personnel
-- Technicians and interns
+- Workshop managers  
+- Maintenance teams  
+- Engineers  
+- Storekeepers  
+- Factory operations personnel  
+- Technicians and interns  
 
 ---
 
