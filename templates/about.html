@@ -1,135 +1,106 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% block title %}About - EngiStore{% endblock %}
 
 {% block content %}
 <div class="content-container p-4">
   <h2 class="mb-4 border-bottom pb-2" style="color: var(--primary-blue);">
-    <i class="fas fa-cogs me-2"></i>About the Project
+    <i class="fas fa-cogs me-2"></i>About EngiStore
   </h2>
 
-  <div class="about-content">
+  <!-- 🔧 About the System -->
+  <div class="mb-5">
+    <p>
+      <strong>EngiStore is an intelligent inventory system built for engineers, by engineers.</strong>
+    </p>
+    <p>
+      Designed for <strong>factory maintenance teams, pharmaceutical plants, and industrial technicians</strong>, 
+      it replaces clunky spreadsheets and guesswork with <strong>real-time tracking, automated alerts, 
+      and seamless part-to-machine logging</strong>—so your team spends less time searching for parts 
+      and more time keeping operations running.
+    </p>
+    
+    <h5 class="mt-4 mb-3" style="color: var(--primary-blue);">How EngiStore Simplifies Your Workflow:</h5>
+    <ul class="list-unstyled">
+      <li class="mb-2">📦 <strong>Smarter Stock Control</strong><br>
+        <small>Browse parts by category, location, or machine—with color-coded warnings for low stock.</small></li>
+      <li class="mb-2">🛠️ <strong>Maintenance Made Traceable</strong><br>
+        <small>Every part used is logged to its asset, creating a repair history that's auditable in seconds.</small></li>
+      <li class="mb-2">📉 <strong>Automated Inventory Awareness</strong><br>
+        <small>Get visual cues for low stock parts before they impact operations.</small></li>
+      <li class="mb-2">👥 <strong>Role-Smart Access</strong><br>
+        <small>Admins get full control, technicians log usage, and viewers check stock—no more unauthorized withdrawals.</small></li>
+      <li class="mb-2">📩 <strong>Missing Something?</strong><br>
+        <small>Request new items directly in the system, with approvals routed to managers.</small></li>
+    </ul>
+  </div>
 
-    <!-- Developer Section -->
-    <div class="card mb-4 border-primary" style="border-color: var(--accent-blue);">
-      <div class="card-body">
-        <h3 class="card-title" style="color: var(--primary-blue);">
-          <i class="fas fa-user-hard-hat me-2"></i>Yandisa Gaju
-        </h3>
-        <div class="alert alert-light" style="background: var(--light-bg);">
-            <p class="mb-1"><strong>Profession:</strong> Mechanical Technician with a passion for building efficient digital systems</p>
-            <p class="mb-1"><strong>Tech Stack:</strong> Python, Django, HTML, CSS, Bootstrap, SQLite</p>
-            <p class="mb-0"><strong>Bootcamp:</strong> Software Engineering Bootcamp Graduate (HyperionDev)</p>
-          </div>
-          
-        <div class="mt-3 d-flex gap-2">
-          <a href="https://github.com/Yandisa" class="btn btn-sm" style="background: var(--secondary-blue); color: white;">
-            <i class="fab fa-github me-1"></i>GitHub
-          </a>
-          <a href="{% url 'dashboard' %}" class="btn btn-sm" style="background: var(--accent-blue); color: white;">
-            <i class="fas fa-desktop me-1"></i>Launch Demo
-          </a>
+  <!-- 💻 Technical Section -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <i class="fas fa-server me-2"></i>Built for Reliability
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled">
+            <li class="mb-2"><strong>Backend:</strong> Django + Python <small class="text-muted">(battle-tested for heavy industry use)</small></li>
+            <li class="mb-2"><strong>Frontend:</strong> Bootstrap 5 <small class="text-muted">(clean, works even on factory-floor tablets)</small></li>
+            <li class="mb-2"><strong>Database:</strong> SQLite (dev) <small class="text-muted">/ PostgreSQL-ready (scales when you do)</small></li>
+            <li class="mb-2"><strong>Deployment:</strong> Render <small class="text-muted">(free hosting with production-ready options)</small></li>
+            <li><strong>Version Control:</strong> Git & GitHub <small class="text-muted">(full change history)</small></li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <!-- Skills Section -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-6">
-        <div class="card h-100 shadow-sm" style="border-color: var(--primary-blue);">
-          <div class="card-header" style="background: var(--primary-blue); color: white;">
-            <i class="fas fa-code me-2"></i>What I Built
-          </div>
-          <div class="card-body">
-            <ul class="list-unstyled">
-              <li class="mb-3">
-                <i class="fas fa-database me-2" style="color: var(--accent-blue);"></i>
-                <strong>Structured Data:</strong> Clean database design using Django ORM
-              </li>
-              <li class="mb-3">
-                <i class="fas fa-user-shield me-2" style="color: var(--secondary-blue);"></i>
-                <strong>Secure Access:</strong> Role-based user authentication
-              </li>
-              <li class="mb-3">
-                <i class="fas fa-tablet-alt me-2" style="color: var(--primary-blue);"></i>
-                <strong>Mobile-Friendly:</strong> Responsive UI for smooth usage across devices
-              </li>
-              <li class="mb-3">
-                <i class="fas fa-project-diagram me-2" style="color: var(--accent-blue);"></i>
-                <strong>Framework:</strong> Django-powered MVC structure
-              </li>
-            </ul>
-          </div>
+    <div class="col-md-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <i class="fas fa-shield-alt me-2"></i>Security & Access
         </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card h-100 shadow-sm" style="border-color: var(--primary-blue);">
-          <div class="card-header" style="background: var(--primary-blue); color: white;">
-            <i class="fas fa-industry me-2"></i>Engineering Meets Code
-          </div>
-          <div class="card-body">
-            <ul class="list-unstyled">
-              <li class="mb-3">
-                <i class="fas fa-warehouse me-2" style="color: var(--secondary-blue);"></i>
-                Inventory logic inspired by real workflows
-              </li>
-              <li class="mb-3">
-                <i class="fas fa-clipboard-list me-2" style="color: var(--accent-blue);"></i>
-                Maintenance history tracking per asset
-              </li>
-              <li class="mb-3">
-                <i class="fas fa-user-cog me-2" style="color: var(--primary-blue);"></i>
-                Permission-based user actions for different teams
-              </li>
-              <li class="mb-3">
-                <i class="fas fa-search me-2" style="color: var(--secondary-blue);"></i>
-                Efficient stock filtering and search
-              </li>
-            </ul>
-          </div>
+        <div class="card-body">
+          <ul class="list-unstyled">
+            <li class="mb-2">🔐 <strong>Role-based permissions</strong><br>
+              <small>Admin, Manager, Technician, Viewer—each with tailored access</small></li>
+            <li class="mb-2">📊 <strong>Admin dashboard</strong><br>
+              <small>Quick stats and complete request visibility</small></li>
+            <li class="mb-2">📥 <strong>Full audit trails</strong><br>
+              <small>Every part usage logged with user tracking and timestamps</small></li>
+            <li>🔄 <strong>Sandbox safety</strong><br>
+              <small>Demo accounts reset every 24 hours</small></li>
+          </ul>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Technical Highlights -->
-    <div class="alert" style="background: var(--light-bg); border-left: 4px solid var(--accent-blue);">
-      <h5 class="mb-3" style="color: var(--primary-blue);">
-        <i class="fas fa-code-branch me-2"></i>Core Features Behind the Scenes
-      </h5>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <div class="d-flex align-items-center mb-2">
-            <span class="badge me-2" style="background: var(--secondary-blue);">1</span>
-            Relational models with Django ORM
-          </div>
-          <div class="d-flex align-items-center mb-2">
-            <span class="badge me-2" style="background: var(--accent-blue);">2</span>
-            Custom tags & filters for templates
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="d-flex align-items-center mb-2">
-            <span class="badge me-2" style="background: var(--primary-blue);">3</span>
-            Smart form logic with conditionals
-          </div>
-          <div class="d-flex align-items-center mb-2">
-            <span class="badge me-2" style="background: var(--secondary-blue);">4</span>
-            Automated part usage tracking
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Employer CTA -->
-    <div class="alert alert-primary mt-4" style="background: var(--light-bg); border-color: var(--accent-blue);">
-      <h5 style="color: var(--primary-blue);">
-        <i class="fas fa-briefcase me-2"></i>Why This Matters
-      </h5>
-      <p class="mb-0">
-        EngiStore isn’t just code — it’s my real-world solution for engineering inventory challenges.  
-        I built this from scratch to blend technical problem-solving with practical, hands-on understanding.  
-        It’s scalable, maintainable, and built with production in mind.
+  <!-- 👨‍💻 Developer Section -->
+  <div class="card border-0 bg-light mt-5">
+    <div class="card-body">
+      <h4 class="card-title" style="color: var(--primary-blue);">
+        <i class="fas fa-user-circle me-2"></i>From Gears to Code: Meet the Developer
+      </h4>
+      <p class="mb-2">
+        <strong>Yandisa Gaju</strong> combines <strong>hands-on engineering experience</strong> (pharmaceuticals, aviation) 
+        with <strong>software development skills</strong> to build tools that solve real-world maintenance challenges.
       </p>
+      <p class="mb-2">
+        Ranked <strong>#1 in HyperionDev's Software Engineering Bootcamp</strong>, I created <strong>EngiStore</strong> 
+        to bridge the gap between industrial operations and smart inventory management—proving that 
+        <strong>great tools don't have to be complicated</strong>.
+      </p>
+      <p>
+        This isn't a bootcamp project—it's a <strong>practical solution</strong> born from seeing firsthand 
+        how disorganized inventory wastes hours and delays critical repairs.
+      </p>
+      <div class="d-flex gap-3 mt-3">
+        <a href="https://github.com/Yandisa" class="btn btn-sm btn-dark">
+          <i class="fab fa-github me-1"></i>GitHub
+        </a>
+        <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-primary">
+          <i class="fas fa-desktop me-1"></i>Explore Dashboard
+        </a>
+      </div>
     </div>
   </div>
 </div>

@@ -1,29 +1,27 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
+<h2 class="mb-4">📦 Parts Inventory</h2>
 
-<h2 class="mb-4">Parts Inventory</h2>
-
-<!-- 🔒 Show Request Part link to Technicians and Viewers only -->
+<!-- 🔒 Request Part Notice -->
 {% if user.is_authenticated %}
   {% with group=user.groups.first %}
-  {% if group %}
-  {% if group.name == "Technician" or group.name == "Viewer" %}
-    <li class="nav-item">
-      <a href="{% url 'request_part' %}" class="nav-link">
-        <i class="fas fa-plus-circle me-2"></i>Request Part
-      </a>
-    </li>
-  
-  {% endif %} <li class="nav-item">
-        <a href="{% url 'request_part' %}" class="nav-link">
-          <i class="fas fa-plus-circle me-2"></i>Request Part
+    {% if group and group.name == "Technician" or group.name == "Viewer" %}
+      <div class="mb-4 p-3 bg-light border rounded">
+        <a href="{% url 'request_part' %}" class="btn btn-outline-primary">
+          <i class="fas fa-plus-circle me-1"></i>Request New Part
         </a>
-      </li>
+        <p class="small text-muted mt-2 mb-0">
+          <i class="fas fa-info-circle me-1"></i>
+          Requested parts are not available in current inventory and will be sourced externally.
+        </p>
+      </div>
     {% endif %}
   {% endwith %}
 {% endif %}
 
-<!-- 🔎 Search and Filter Form -->
+<!-- 🔍 Search & Filter -->
 <form method="get" class="row g-2 mb-4">
   <div class="col-md-6">
     <input type="text" name="q" class="form-control"
@@ -34,9 +32,7 @@
       <option value="">All Categories</option>
       {% for category in categories %}
         <option value="{{ category.id }}"
-          {% if category.id|stringformat:"s" == selected_category %}
-            selected
-          {% endif %}>
+          {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
           {{ category.name }}
         </option>
       {% endfor %}
@@ -49,51 +45,49 @@
   </div>
 </form>
 
-<!-- 📦 Inventory Cards -->
+<!-- 📊 Tabular List -->
 {% if parts %}
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for part in parts %}
-      <div class="col">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">{{ part.name }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">
-              {{ part.part_number }}
-            </h6>
-            <p class="card-text">
-              {{ part.description|default:"No description." }}
-            </p>
-            <p class="mb-1">
-              <strong>Location:</strong>
-              Room {{ part.room }} &middot;
-              Aisle {{ part.aisle }} &middot;
-              Bin {{ part.bin_number }}
-            </p>
-            <p>
-              <strong>Quantity:</strong>
-              {% if part.quantity <= part.reorder_threshold %}
-                <span class="badge bg-danger">
-                  {{ part.quantity }} ⚠ Low Stock
-                </span>
-              {% else %}
-                <span class="badge bg-success">
-                  {{ part.quantity }}
-                </span>
-              {% endif %}
-            </p>
-          </div>
-          <div class="card-footer text-end">
-            <a href="{{ part.id }}/"
-               class="btn btn-sm btn-outline-primary">
-              View
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Part Name</th>
+          <th>Part Number</th>
+          <th>Category</th>
+          <th>Location</th>
+          <th>Qty</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for part in parts %}
+        <tr>
+          <td>{{ part.name }}</td>
+          <td class="text-muted">{{ part.part_number }}</td>
+          <td>{{ part.category.name|default:"—" }}</td>
+          <td>
+            Room {{ part.room }},
+            Aisle {{ part.aisle }},
+            Bin {{ part.bin_number }}
+          </td>
+          <td>
+            {% if part.quantity <= part.reorder_threshold %}
+              <span class="badge bg-danger">{{ part.quantity }}</span>
+            {% else %}
+              <span class="badge bg-success">{{ part.quantity }}</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a href="{{ part.id }}/" class="btn btn-sm btn-outline-primary">
+              View & Take
             </a>
-          </div>
-        </div>
-      </div>
-    {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 {% else %}
   <p class="text-muted">No parts found.</p>
 {% endif %}
-
 {% endblock %}

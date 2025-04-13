@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect
+from django.contrib.auth.views import LoginView
 from django.contrib import messages
+from django.shortcuts import render, redirect
 from utils.permissions import is_manager, is_admin
 
 
@@ -44,3 +45,13 @@ def create_user(request):
     # Display available roles in the form
     roles = Group.objects.all()
     return render(request, 'users/create_user.html', {'roles': roles})
+
+
+class CustomLoginView(LoginView):
+    """
+    Custom login view that adds a success message on valid login.
+    """
+    def form_valid(self, form):
+        user = form.get_user()
+        messages.success(self.request, f"✅ Welcome back, {user.username}!")
+        return super().form_valid(form)

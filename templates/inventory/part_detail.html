@@ -3,8 +3,8 @@
 
 {% block content %}
 <!-- 📦 Part Overview -->
-<div class="card mb-4 shadow-sm">
-  <div class="card-body">
+<div class="card mb-4 shadow-sm" style="border-radius: var(--border-radius); box-shadow: var(--shadow-sm); background: white;">
+  <div class="card-body" style="color: var(--dark-text);">
     <h3 class="card-title">
       {{ part.name }}
       <small class="text-muted">({{ part.part_number }})</small>
@@ -14,17 +14,16 @@
     </p>
     <p>
       <strong>Location:</strong>
-      Room {{ part.room }}, Aisle {{ part.aisle }},
-      Bin {{ part.bin_number }}
+      Room {{ part.room }}, Aisle {{ part.aisle }}, Bin {{ part.bin_number }}
     </p>
     <p>
       <strong>Quantity:</strong>
       {% if part.quantity <= part.reorder_threshold %}
-        <span class="badge bg-danger">
+        <span class="badge bg-danger" style="background-color: var(--danger-red);">
           {{ part.quantity }} ⚠ Low
         </span>
       {% else %}
-        <span class="badge bg-success">
+        <span class="badge bg-success" style="background-color: var(--success-green);">
           {{ part.quantity }}
         </span>
       {% endif %}
@@ -33,9 +32,9 @@
 </div>
 
 <!-- 📑 Usage History -->
-<h5>Usage History</h5>
+<h5 class="mb-3" style="color: var(--primary-blue);">Usage History</h5>
 {% if usage_logs %}
-  <ul class="list-group">
+  <ul class="list-group mb-4" style="border-radius: var(--border-radius);">
     {% for usage in usage_logs %}
       <li class="list-group-item d-flex justify-content-between align-items-center">
         <div>
@@ -48,14 +47,14 @@
             by <span class="text-muted">Unknown</span>
           {% endif %}
         </div>
-        <span class="badge bg-primary rounded-pill">
+        <span class="badge bg-primary rounded-pill" style="background-color: var(--accent-blue);">
           {{ usage.quantity_used }}
         </span>
       </li>
     {% endfor %}
   </ul>
 {% else %}
-  <p class="text-muted">
+  <p class="text-muted mb-4">
     This part has not been used on any assets yet.
   </p>
 {% endif %}
@@ -63,7 +62,7 @@
 <!-- 🛒 Take from stock form -->
 {% if can_take_part %}
   <hr class="my-4">
-  <h5>🛒 Take from Stock</h5>
+  <h5 style="color: var(--primary-blue);">🛒 Take from Stock</h5>
 
   {% if part.quantity > 0 %}
     <form method="post" class="row g-3" id="take-part-form">
@@ -75,15 +74,13 @@
         {{ form.asset.label_tag }} {{ form.asset }}
       </div>
       <div class="col-md-2 d-grid">
-        <button type="submit" class="btn btn-danger mt-4">
+        <button type="submit" class="btn mt-4" style="background-color: var(--danger-red); color: white;">
           Take
         </button>
       </div>
     </form>
   {% else %}
-    <p class="text-danger">
-      Out of stock — cannot take any more.
-    </p>
+    <p class="text-danger">Out of stock — cannot take any more.</p>
   {% endif %}
 {% endif %}
 

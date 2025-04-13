@@ -165,13 +165,14 @@ python manage.py runserver
 
 ## 📌 Target Users
 
+EngiStore is built for hands-on teams that need simplicity, speed, and control.
+
 - Workshop managers  
 - Maintenance teams  
 - Engineers  
 - Storekeepers  
 - Factory operations personnel  
 - Technicians and interns  
-
 ---
 
 ## 👨‍💻 Developer

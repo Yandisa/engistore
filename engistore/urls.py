@@ -23,11 +23,13 @@ urlpatterns = [
     # 🛠 Assets tracking
     path('assets/', include('assets.urls')),
 
-    # 👥 User-related views (e.g., create user)
+    # 👥 Custom user-related views (create user, custom login)
     path('users/', include('users.urls')),
 
-    # 🔐 Auth (login, logout, password reset, etc.)
-    path('accounts/logout/', auth_views.LogoutView.as_view(),
-         name='logout'),
+    # 🔐 Authentication routes
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+  
+    
+    path('accounts/', include('users.urls')),  # includes CustomLoginView
     path('accounts/', include('django.contrib.auth.urls')),
 ]

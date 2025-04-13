@@ -8,49 +8,42 @@
   <h2 class="mb-4">📝 My Part Requests</h2>
 
   {% if requests %}
-    <!-- 📋 Responsive table of requests -->
-    <div class="table-responsive">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Part Name</th>
-            <th>Part Number</th>
-            <th>Quantity</th>
-            <th>Requested On</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for request in requests %}
-          <tr>
-            <td>{{ request.name }}</td>
-            <td>{{ request.part_number }}</td>
-            <td>{{ request.quantity_needed }}</td>
-            <td>{{ request.created_at|date:"M d, Y" }}</td>
-            <td>
-              {% if request.status == 'Pending' %}
-                <span class="badge bg-warning text-dark">
-                  Pending
-                </span>
-              {% elif request.status == 'Approved - Awaiting Delivery' %}
-                <span class="badge bg-info text-dark">
-                  Approved - Awaiting Delivery
-                </span>
-              {% elif request.status == 'Rejected' %}
-                <span class="badge bg-danger">Rejected</span>
-              {% elif request.status == 'Delivered' %}
-                <span class="badge bg-success">Delivered</span>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      {% for request in requests %}
+        <div class="col">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title mb-1">
+                {{ request.name }}
+                <span class="text-muted small">({{ request.part_number|default:"N/A" }})</span>
+              </h5>
+              <p class="mb-1"><strong>Quantity:</strong> {{ request.quantity_needed }}</p>
+              <p class="mb-1"><strong>Reason:</strong> {{ request.reason|default:"—" }}</p>
+              <p class="mb-2 text-muted"><strong>Requested On:</strong> {{ request.created_at|date:"M d, Y" }}</p>
+
+              <!-- Status Badge -->
+              <div>
+                {% if request.status == 'Pending' %}
+                  <span class="badge bg-warning text-dark">Pending</span>
+                {% elif request.status == 'Approved' %}
+                  <span class="badge bg-primary">Approved</span>
+                {% elif request.status == 'Approved - Awaiting Delivery' %}
+                  <span class="badge bg-info text-dark">Awaiting Delivery</span>
+                {% elif request.status == 'Rejected' %}
+                  <span class="badge bg-danger">Rejected</span>
+                {% elif request.status == 'Delivered' %}
+                  <span class="badge bg-success">Delivered</span>
+                {% else %}
+                  <span class="badge bg-secondary">Unknown</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     </div>
   {% else %}
-    <p class="text-muted">
-      You haven't submitted any part requests yet.
-    </p>
+    <p class="text-muted">You haven't submitted any part requests yet.</p>
   {% endif %}
 </div>
 {% endblock %}

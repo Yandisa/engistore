@@ -147,9 +147,6 @@ def part_detail(request, pk):
             else:
                 try:
                     with transaction.atomic():
-                        part.quantity -= quantity
-                        part.save()
-
                         PartUsage.objects.create(
                             asset=asset,
                             part=part,
@@ -165,7 +162,7 @@ def part_detail(request, pk):
                     return redirect('part_detail', pk=part.pk)
 
                 except ValidationError as e:
-                    messages.error(request, e)
+                    messages.error(request, str(e))
 
     return render(request, 'inventory/part_detail.html', {
         'part': part,

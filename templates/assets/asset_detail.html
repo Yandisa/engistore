@@ -16,13 +16,14 @@
 </div>
 
 <!-- 📋 Usage History -->
-<h4>Part Usage History</h4>
+<h4 class="mb-3">🧾 Part Usage History</h4>
 {% if part_usages %}
   <ul class="list-group mb-4">
     {% for usage in part_usages %}
       <li class="list-group-item d-flex justify-content-between align-items-center">
         <div>
-          {{ usage.used_on }} — <strong>{{ usage.part.name }}</strong>
+          <strong>{{ usage.part.name }}</strong>
+          <small class="text-muted">used on {{ usage.used_on }}</small>
         </div>
         <span class="badge bg-primary rounded-pill">
           {{ usage.quantity_used }}
@@ -37,20 +38,24 @@
 {% endif %}
 
 <!-- ➕ Log New Usage -->
-<hr class="my-4">
-<h5>Log Part Usage</h5>
-<form method="post" class="row g-3">
-  {% csrf_token %}
-  <div class="col-md-6">
-    {{ form.part.label_tag }} {{ form.part }}
-  </div>
-  <div class="col-md-4">
-    {{ form.quantity_used.label_tag }} {{ form.quantity_used }}
-  </div>
-  <div class="col-md-2">
-    <button type="submit" class="btn btn-success w-100 mt-4">
-      Log Usage
-    </button>
-  </div>
-</form>
+{% if form %}
+  <hr class="my-4">
+  <h5 class="mb-3">➕ Log Part Usage</h5>
+  <form method="post" class="row g-3">
+    {% csrf_token %}
+    <div class="col-md-6">
+      <label for="{{ form.part.id_for_label }}" class="form-label">Part</label>
+      {{ form.part }}
+    </div>
+    <div class="col-md-4">
+      <label for="{{ form.quantity_used.id_for_label }}" class="form-label">Quantity Used</label>
+      {{ form.quantity_used }}
+    </div>
+    <div class="col-md-2 d-grid">
+      <button type="submit" class="btn btn-success mt-4">
+        Log Usage
+      </button>
+    </div>
+  </form>
+{% endif %}
 {% endblock %}

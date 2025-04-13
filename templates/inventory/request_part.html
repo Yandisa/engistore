@@ -5,64 +5,65 @@
 
 {% block content %}
 <div class="container mt-5">
-  <h2 class="mb-4">📥 Request a New Part</h2>
+  <h2 class="mb-2">📥 Request a New Part</h2>
 
-  <!-- ✅ Flash Messages -->
+  <!-- 💡 Clear info alert -->
+  <div class="alert alert-info d-flex align-items-start gap-2" style="line-height: 1.5;">
+    <i class="fas fa-info-circle fa-lg mt-1 text-info"></i>
+    <div>
+      This form is for parts that are <strong>not currently available in inventory</strong>.
+      Once submitted, your request will be reviewed and may be sourced from an 
+      <strong>external supplier</strong>.
+    </div>
+  </div>
+
+  <p class="text-muted mb-4">
+    Please include accurate part names or numbers if available, and briefly explain the need.
+  </p>
+
   {% if messages %}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
-           role="alert">
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
         {{ message }}
-        <button type="button" class="btn-close"
-                data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% endfor %}
   {% endif %}
 
-  <!-- 🧾 Request Form Card -->
   <div class="card shadow-sm">
     <div class="card-body">
       <form method="post" novalidate>
         {% csrf_token %}
         {{ form.non_field_errors }}
 
-        <!-- 🔧 Part Name -->
         <div class="mb-3">
           <label for="id_name" class="form-label">Part Name</label>
           {{ form.name }}
           {{ form.name.errors }}
         </div>
 
-        <!-- 🆔 Part Number -->
         <div class="mb-3">
-          <label for="id_part_number" class="form-label">Part Number</label>
+          <label for="id_part_number" class="form-label">Part Number (optional)</label>
           {{ form.part_number }}
           {{ form.part_number.errors }}
         </div>
 
-        <!-- 🔢 Quantity -->
         <div class="mb-3">
-          <label for="id_quantity_needed" class="form-label">
-            Quantity Needed
-          </label>
+          <label for="id_quantity_needed" class="form-label">Quantity Needed</label>
           {{ form.quantity_needed }}
           {{ form.quantity_needed.errors }}
         </div>
 
-        <!-- 📝 Reason -->
         <div class="mb-3">
-          <label for="id_reason" class="form-label">Reason</label>
+          <label for="id_reason" class="form-label">Reason / Additional Notes</label>
           {{ form.reason }}
           {{ form.reason.errors }}
         </div>
 
-        <!-- ✅ Actions -->
-        <button type="submit" class="btn btn-primary">
-          Submit Request
-        </button>
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
-          Cancel
-        </a>
+        <div class="d-flex justify-content-end gap-2">
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Submit Request</button>
+        </div>
       </form>
     </div>
   </div>
