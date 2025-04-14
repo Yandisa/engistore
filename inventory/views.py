@@ -55,6 +55,7 @@ def get_client_ip(request):
         ip = request.META.get("REMOTE_ADDR")
     return ip
 
+
 def dashboard(request):
     """
     Displays system stats and user-specific widgets on login.
@@ -85,6 +86,7 @@ def dashboard(request):
     is_logged_in = request.user.is_authenticated
 
     visit_stats = None
+    total_site_visits = VisitLog.objects.count()
 
     if is_logged_in:
         recent_usage = PartUsage.objects.select_related(
@@ -123,6 +125,7 @@ def dashboard(request):
         'user_group': user_group,
         'is_logged_in': is_logged_in,
         'visit_stats': visit_stats,
+        'total_site_visits': total_site_visits,
     })
 
 
