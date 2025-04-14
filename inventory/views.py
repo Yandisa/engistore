@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
+from core.models import VisitLog
 
 from .models import Part, Category, PartRequest
 from assets.models import Asset, PartUsage
@@ -45,11 +47,27 @@ def part_list(request):
 
 
 # 📊 Dashboard view (basic stats + latest activity)
+def get_client_ip(request):
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get("REMOTE_ADDR")
+    return ip
+
 def dashboard(request):
     """
     Displays system stats and user-specific widgets on login.
     Accessible to all; more data shown to authenticated users.
     """
+
+    # ✅ Log the visit
+    VisitLog.objects.create(
+        page="dashboard",
+        ip_address=get_client_ip(request),
+        user_agent=request.META.get('HTTP_USER_AGENT', '')
+    )
+
     total_parts = Part.objects.count()
     total_assets = Asset.objects.count()
     low_stock_count = Part.objects.filter(
@@ -65,6 +83,8 @@ def dashboard(request):
     can_add_user = False
     can_request_part = False
     is_logged_in = request.user.is_authenticated
+
+    visit_stats = None
 
     if is_logged_in:
         recent_usage = PartUsage.objects.select_related(
@@ -82,6 +102,14 @@ def dashboard(request):
         if is_technician(request.user) or user_group == "Viewer":
             can_request_part = True
 
+        # 🧠 Show site visit stats to superusers only
+        if request.user.is_superuser:
+            visit_stats = (
+                VisitLog.objects.values('page')
+                .annotate(total=Count('id'))
+                .order_by('-total')
+            )
+
     return render(request, 'dashboard.html', {
         'total_parts': total_parts,
         'total_assets': total_assets,
@@ -94,6 +122,7 @@ def dashboard(request):
         'can_request_part': can_request_part,
         'user_group': user_group,
         'is_logged_in': is_logged_in,
+        'visit_stats': visit_stats,
     })
 
 

@@ -107,4 +107,27 @@
   <p class="text-muted">No usage logged yet.</p>
 {% endif %}
 
+{% if visit_stats %}
+  <hr class="my-4">
+  <h5>📊 Site Visit Stats (Admin Only)</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered table-sm shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Page</th>
+          <th>Total Visits</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in visit_stats %}
+          <tr>
+            <td>{{ item.page|title }}</td>
+            <td>{{ item.total }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
 {% endblock %}

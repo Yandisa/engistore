@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'assets',
     'suppliers',
     'users',
+    'core',
 ]
 
 # 🧱 Middleware
